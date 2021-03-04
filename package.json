@@ -2,9 +2,11 @@
   "name": "websocket_signaling_server",
   "version": "1.0.0",
   "description": "A signaling server for webrtc implemented using Nodejs with the help of Socket.io",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon server.js"
   },
   "author": "Prasad Zore",
   "license": "ISC",
