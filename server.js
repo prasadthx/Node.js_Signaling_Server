@@ -10,14 +10,15 @@ let io = new Server(httpServer,{
         origin: "http://localhost:4200",
         methods: ["GET", "POST"],
         allowedHeaders: ["my-custom-header"],
-        credentials: true
+        credentials: true,
     }
 });
 
 const port = process.env.PORT || 3000;
-
+var time = 0;
 io.on('connection', (socket) => {
-    console.log('user connected');
+    time += 1
+    console.log('user connected: '+time+'time');
 });
 
 httpServer.listen(port, () => {
