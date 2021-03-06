@@ -5,19 +5,21 @@ const { User } = model;
 
 export default {
   async signUp(req, res) {
-    const {email, password, name, phone} = req.body;
+    const {defaultName, email, firstName, lastName, password, meetings} = req.body;
     try {
-      const user = await User.findOne({where: {[Op.or]: [ {phone}, {email} ]}});
+      const user = await User.findOne({where: {[Op.or]: [ {email} ]}});
       if(user) {
         return res.status(422)
         .send({message: 'User with that email or phone already exists'});
       }
 
       await User.create({
-        name,
+        defaultName,
         email,
+        firstName,
+        lastName,
         password,
-        phone,
+        meetings,
       });
       return res.status(201).send({message: 'Account created successfully'});
     } catch(e) {

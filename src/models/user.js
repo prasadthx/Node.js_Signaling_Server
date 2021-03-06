@@ -23,7 +23,7 @@ export default (sequelize, DataTypes) => {
     }
   };
   User.init({
-    name: DataTypes.STRING,
+    defaultName: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
       allowNull: {
@@ -41,14 +41,31 @@ export default (sequelize, DataTypes) => {
         },
       },
     },
-    phone: {
+    firstName: {
       type: DataTypes.STRING,
-      unique: true,
+      allowNull: {
+        args: false,
+        msg: 'Please enter your first name',
+      },
     },
-    password: DataTypes.STRING,
-    status: DataTypes.STRING,
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: {
+        args: false,
+        msg: 'Please enter your first name',
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: {
+        args: false,
+        msg: 'Please enter your password',
+      },
+    },
+    meetings: {
+      type: DataTypes.JSON,
+    },
     last_login_at: DataTypes.DATE,
-    last_ip_address: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',
