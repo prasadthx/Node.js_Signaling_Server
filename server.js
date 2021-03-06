@@ -1,9 +1,21 @@
 import { createServer } from "http";
 import express from "express";
 import { Server } from "socket.io";
+import route from './src/routes'
 
 const app = express();
 const httpServer = createServer(app);
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+route(app);
+
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to bezkoder application." });
+});
+
+
 
 let io = new Server(httpServer,{
     cors: {
@@ -14,7 +26,8 @@ let io = new Server(httpServer,{
     }
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
+
 var time = 0;
 io.on('connection', (socket) => {
     time += 1
