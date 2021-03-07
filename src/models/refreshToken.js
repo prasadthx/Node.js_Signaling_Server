@@ -14,7 +14,7 @@ export default (sequelize, DataTypes) => {
         createdByIp: { type: DataTypes.STRING },
         revoked: { type: DataTypes.DATE },
         revokedByIp: { type: DataTypes.STRING },
-        replacedByToken: { type: DataTypes.STRING },
+        // replacedByToken: { type: DataTypes.STRING },
         isExpired: {
             type: DataTypes.VIRTUAL,
             get() { return Date.now() >= this.expires; }

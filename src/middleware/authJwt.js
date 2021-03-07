@@ -1,32 +1,27 @@
-import { jwt } from 'jsonwebtoken';
-import enVariables from '../config/config.js';
-import model from '../models';
+const jwt = require('express-jwt');
+// const { secret } = require('config.json');
+const db = require('../models/index');
 
-const { User } = model;
-const config = enVariables[env];
+module.exports = authorize;
 
-let verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+function authorize(roles = []) {
+    return [
+        // authenticate JWT token and attach user to request object (req.user)
+        jwt({ secret:"Hello world", algorithms: ['HS256'] }),
 
-  if (!token) {
-    return res.status(403).send({
-      message: "No token provided!"
-    });
-  }
+        // authorize based on user role
+        async (req, res, next) => {
+            const account = await db.Account.findByPk(req.user.id);
 
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!"
-      });
-    }
-    req.userId = decoded.id;
-    next();
-  });
-};
+            if (!account || (roles.length && !roles.includes(account.role))) {
+                // account no longer exists or role not authorized
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
 
-const authJwt = {
-  verifyToken: verifyToken,
-};
-
-export default authJwt;
+            // authentication and authorization successful
+            req.user.role = account.role;
+            const refreshTokens = await account.getRefreshTokens();
+            req.user.ownsToken = token => !!refreshTokens.find(x => x.token === token);
+            next();
+        }
+    ]};

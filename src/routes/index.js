@@ -24,7 +24,7 @@ router.post('/reset-password', AuthController.resetPasswordSchema, AuthControlle
 
 router.get('/:id', authorize(), AuthController.getById);
 
-router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
+// router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
 
 router.put('/:id', authorize(), AuthController.updateSchema, AuthController.update);
 

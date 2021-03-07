@@ -17,7 +17,6 @@ module.exports = {
     resetPassword,
     getAll,
     getById,
-    create,
     update,
     delete: _delete
 };
@@ -54,10 +53,10 @@ async function refreshToken({ token, ipAddress }) {
 
     // replace old refresh token with a new one and save
     const newRefreshToken = generateRefreshToken(User, ipAddress);
-    refreshToken.revoked = Date.now();
-    refreshToken.revokedByIp = ipAddress;
-    refreshToken.replacedByToken = newRefreshToken.token;
-    await refreshToken.save();
+    // refreshToken.revoked = Date.now();
+    // refreshToken.revokedByIp = ipAddress;
+    // refreshToken.replacedByToken = newRefreshToken.token;
+    // await refreshToken.save();
     await newRefreshToken.save();
 
     // generate new jwt
@@ -84,7 +83,8 @@ async function register(params, origin) {
     // validate
     if (await db.User.findOne({ where: { email: params.email } })) {
         // send already registered error in email to prevent account enumeration
-        return await sendAlreadyRegisteredEmail(params.email, origin);
+        // return await sendAlreadyRegisteredEmail(params.email, origin);
+        return "Email already registered."
     }
 
     // create account object
@@ -117,7 +117,7 @@ async function forgotPassword({ email }, origin) {
     const User = await db.User.findOne({ where: { email } });
 
     // always return ok response to prevent email enumeration
-    if (!User) return;
+    if (!User) return "User not found";
 
     // create reset token that expires after 24 hours
     User.resetToken = randomTokenString();
@@ -160,23 +160,23 @@ async function getById(id) {
     return basicDetails(User);
 }
 
-async function create(params) {
-    // validate
-    if (await db.User.findOne({ where: { email: params.email } })) {
-        throw 'Email "' + params.email + '" is already registered';
-    }
+// async function create(params) {
+//     // validate
+//     if (await db.User.findOne({ where: { email: params.email } })) {
+//         throw 'Email "' + params.email + '" is already registered';
+//     }
 
-    const User = new db.User(params);
-    User.verified = Date.now();
+//     const User = new db.User(params);
+//     User.verified = Date.now();
 
-    // hash password
-    User.password = await hash(params.password);
+//     // hash password
+//     User.password = await hash(params.password);
 
-    // save account
-    await User.save();
+//     // save account
+//     await User.save();
 
-    return basicDetails(User);
-}
+//     return basicDetails(User);
+// }
 
 async function update(id, params) {
     const User = await getUser(id);
@@ -212,7 +212,7 @@ async function getUser(id) {
 }
 
 async function getRefreshToken(token) {
-    const refreshToken = await db.RefreshToken.findOne({ where: { token:token } });
+    const refreshToken = await db.RefreshToken.findOne({ where: { token } });
     if (!refreshToken || !refreshToken.isActive) throw 'Invalid token';
     return refreshToken;
 }
@@ -226,7 +226,13 @@ function generateJwtToken(User) {
     return jwt.sign({ sub: User.id, id: User.id }, config.secret, { expiresIn: '15m' });
 }
 
-function generateRefreshToken(User, ipAddress) {
+async function generateRefreshToken(User, ipAddress) {
+
+    //delete old token
+    const oldRefreshToken = await db.RefreshToken.findOne({ where: { User:User } });
+    if(oldRefreshToken){
+        await oldRefreshToken.destroy()
+    }
     // create a refresh token that expires in 7 days
     return new db.RefreshToken({
         accountId: User.id,
@@ -265,22 +271,22 @@ async function sendVerificationEmail(User, origin) {
     });
 }
 
-async function sendAlreadyRegisteredEmail(email, origin) {
-    let message;
-    if (origin) {
-        message = `<p>If you don't know your password please visit the <a href="${origin}/account/forgot-password">forgot password</a> page.</p>`;
-    } else {
-        message = `<p>If you don't know your password you can reset it via the <code>/account/forgot-password</code> api route.</p>`;
-    }
+// async function sendAlreadyRegisteredEmail(email, origin) {
+//     let message;
+//     if (origin) {
+//         message = `<p>If you don't know your password please visit the <a href="${origin}/account/forgot-password">forgot password</a> page.</p>`;
+//     } else {
+//         message = `<p>If you don't know your password you can reset it via the <code>/account/forgot-password</code> api route.</p>`;
+//     }
 
-    await sendEmail({
-        to: email,
-        subject: 'Sign-up Verification API - Email Already Registered',
-        html: `<h4>Email Already Registered</h4>
-               <p>Your email <strong>${email}</strong> is already registered.</p>
-               ${message}`
-    });
-}
+//     await sendEmail({
+//         to: email,
+//         subject: 'Sign-up Verification API - Email Already Registered',
+//         html: `<h4>Email Already Registered</h4>
+//                <p>Your email <strong>${email}</strong> is already registered.</p>
+//                ${message}`
+//     });
+// }
 
 async function sendPasswordResetEmail(User, origin) {
     let message;
