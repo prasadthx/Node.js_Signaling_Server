@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
             // define association here
             RefreshToken.belongsTo(models['User']);
           }
-    }
+    };
     RefreshToken.init({
         token: { type: DataTypes.STRING },
         expires: { type: DataTypes.DATE },
@@ -27,7 +27,7 @@ export default (sequelize, DataTypes) => {
     {
         sequelize,
         modelName: 'RefreshToken'
-    })
+    });
 
     return RefreshToken;
-}
+};

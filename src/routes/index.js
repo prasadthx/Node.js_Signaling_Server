@@ -1,22 +1,32 @@
-import AuthController from '../controllers/AuthController'
-
-export default (app) => {
+import AuthController from '../controllers/authController'
+const authorize = require('../middleware/authJwt')
+export default (router) => {
 
 // Create a catch-all route for testing the installation.
-app.all('*', (req, res) => res.status(200).send({
+router.all('*', (req, res) => res.status(200).send({
   message: 'Hello World!',
 }));
+router.post('/authenticate', AuthController.authenticateSchema, AuthController.authenticate);
 
-app.post('/api/auth/register', AuthController.signup);
+router.post('/refresh-token', AuthController.refreshToken);
 
-// app.post('/api/auth/signup', [verifySignUp.checkDuplicateUserNameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
-	
-// app.post('/api/auth/signin', controller.signin);
+router.post('/revoke-token', authorize(), AuthController.revokeTokenSchema, AuthController.revokeToken);
 
-// app.get('/api/test/user', [authJwt.verifyToken], controller.userContent);
+router.post('/register', AuthController.registerSchema, AuthController.register);
 
-// app.get('/api/edit/addMeeting')
+router.post('/verify-email', AuthController.verifyEmailSchema, AuthController.verifyEmail);
 
-// app.get('/api/edit/edituser')
-};
+router.post('/forgot-password', AuthController.forgotPasswordSchema, AuthController.forgotPassword);
 
+router.post('/validate-reset-token', AuthController.validateResetTokenSchema, AuthController.validateResetToken);
+
+router.post('/reset-password', AuthController.resetPasswordSchema, AuthController.resetPassword);
+
+router.get('/:id', authorize(), AuthController.getById);
+
+router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
+
+router.put('/:id', authorize(), AuthController.updateSchema, AuthController.update);
+
+router.delete('/:id', authorize(), AuthController.delete);
+}

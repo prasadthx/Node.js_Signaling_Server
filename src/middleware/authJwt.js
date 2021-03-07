@@ -1,5 +1,5 @@
 import { jwt } from 'jsonwebtoken';
-import enVariables from '../config/config.json';
+import enVariables from '../config/config.js';
 import model from '../models';
 
 const { User } = model;

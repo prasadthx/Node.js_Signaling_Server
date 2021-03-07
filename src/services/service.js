@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require("crypto");
 const { Op } = require('sequelize');
 const sendEmail = require('../helpers/sendEmail');
-const db = require('./index');
+const db = require('../models/index');
 
 module.exports = {
     authenticate,
@@ -25,8 +25,12 @@ module.exports = {
 async function authenticate({ email, password, ipAddress }) {
     const User = await db.User.scope('withHash').findOne({ where: { email } });
 
-    if (!User || !User.isVerified || !(await bcrypt.compare(password, User.password))) {
-        throw 'Email or password is incorrect';
+    if (!User || !User.isVerified ){
+        throw 'Unregisterd or unverified'
+    }
+        
+    if(!(await bcrypt.compare(password, User.password))) {
+        throw 'Password is incorrect';
     }
 
     // authentication successful so generate jwt and refresh tokens
@@ -57,11 +61,11 @@ async function refreshToken({ token, ipAddress }) {
     await newRefreshToken.save();
 
     // generate new jwt
-    const jwtToken = generateJwtToken(account);
+    const jwtToken = generateJwtToken(User);
 
     // return basic details and tokens
     return {
-        ...basicDetails(account),
+        ...basicDetails(User),
         jwtToken,
         refreshToken: newRefreshToken.token
     };
@@ -203,12 +207,12 @@ async function _delete(id) {
 
 async function getUser(id) {
     const User = await db.User.findByPk(id);
-    if (!User) throw 'Account not found';
+    if (!User) throw 'User not found';
     return User;
 }
 
 async function getRefreshToken(token) {
-    const refreshToken = await db.RefreshToken.findOne({ where: { token } });
+    const refreshToken = await db.RefreshToken.findOne({ where: { token:token } });
     if (!refreshToken || !refreshToken.isActive) throw 'Invalid token';
     return refreshToken;
 }
