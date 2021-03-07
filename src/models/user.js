@@ -20,6 +20,7 @@ export default (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasMany(models['RefreshToken'], {onDelete: 'CASCADE' })
     }
   };
   User.init({
@@ -41,6 +42,7 @@ export default (sequelize, DataTypes) => {
         },
       },
     },
+    
     firstName: {
       type: DataTypes.STRING,
       allowNull: {
@@ -48,6 +50,7 @@ export default (sequelize, DataTypes) => {
         msg: 'Please enter your first name',
       },
     },
+    
     lastName: {
       type: DataTypes.STRING,
       allowNull: {
@@ -55,6 +58,7 @@ export default (sequelize, DataTypes) => {
         msg: 'Please enter your first name',
       },
     },
+    
     password: {
       type: DataTypes.STRING,
       allowNull: {
@@ -62,11 +66,27 @@ export default (sequelize, DataTypes) => {
         msg: 'Please enter your password',
       },
     },
-    meetings: {
-      type: DataTypes.JSON,
-    },
+    
+    verificationToken: { type: DataTypes.STRING },
+        
+    verified: { type: DataTypes.DATE },
+        
+    resetToken: { type: DataTypes.STRING },
+        
+    resetTokenExpires: { type: DataTypes.DATE },
+        
+    passwordReset: { type: DataTypes.DATE },
+    
+    meetings: { type: DataTypes.JSON },
+    
     last_login_at: DataTypes.DATE,
-  }, {
+
+    isVerified: {
+      type: DataTypes.VIRTUAL,
+      get() { return !!(this.verified || this.passwordReset); }
+    }
+  }, 
+  {
     sequelize,
     modelName: 'User',
   });
