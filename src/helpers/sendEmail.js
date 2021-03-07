@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const config = require('../config/config');
+import config from '../config/smtp.config.js';
 
 module.exports = sendEmail;
 
