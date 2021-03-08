@@ -1,13 +1,16 @@
 import { createServer } from "http";
 import express from "express";
+import cookieParser from 'cookie-parser';
 import { Server } from "socket.io";
 import route from './src/routes'
+
 
 const app = express();
 const httpServer = createServer(app);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser())
 
 route(app);
 

@@ -1,5 +1,5 @@
 import validateRequest from '../helpers/validateRequest';
-import { Joi } from 'joi';
+import Joi from 'joi';
 import * as UserService from '../services/service'
 module.exports = {
     authenticate,
@@ -41,6 +41,7 @@ function authenticate(req, res, next) {
     UserService.authenticate({ email, password, ipAddress })
         .then(({ refreshToken, ...user }) => {
             setTokenCookie(res, refreshToken);
+            
             res.json(user);
         })
         .catch(next);
@@ -83,13 +84,12 @@ function revokeToken(req, res, next) {
 
 function registerSchema(req, res, next) {
     const schema = Joi.object({
-        defaultName: Joi.string(),
+        defaultName: Joi.string().required(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(6).required(),
         confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-        meetings: Joi.object()
     });
     validateRequest(req, next, schema);
 }
@@ -108,7 +108,7 @@ function verifyEmailSchema(req, res, next) {
 }
 
 function verifyEmail(req, res, next) {
-    accountService.verifyEmail(req.body)
+    UserService.verifyEmail(req.body)
         .then(() => res.json({ message: 'Verification successful, you can now login' }))
         .catch(next);
 }

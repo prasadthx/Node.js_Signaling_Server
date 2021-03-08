@@ -3,9 +3,9 @@ const authorize = require('../middleware/authJwt')
 export default (router) => {
 
 // Create a catch-all route for testing the installation.
-router.all('*', (req, res) => res.status(200).send({
-  message: 'Hello World!',
-}));
+// router.all('*', (req, res) => res.status(200).send({
+//   message: 'Hello World!',
+// }));
 router.post('/authenticate', AuthController.authenticateSchema, AuthController.authenticate);
 
 router.post('/refresh-token', AuthController.refreshToken);
@@ -26,7 +26,7 @@ router.get('/:id', authorize(), AuthController.getById);
 
 // router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
 
-router.put('/:id', authorize(), AuthController.updateSchema, AuthController.update);
+router.put('/user/:id', authorize(), AuthController.updateSchema, AuthController.update);
 
-router.delete('/:id', authorize(), AuthController.delete);
+router.delete('/userdelete/:id', authorize(), AuthController.delete);
 }

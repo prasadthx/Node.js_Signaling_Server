@@ -56,4 +56,7 @@ console.log('Connection has been established successfully.')).catch(
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+// sequelize.sync({ force: true }).then(()=>console.log("Synchronized successful"))
+console.log("-------------------------*****************-----------------------")
+console.log(db.User)
 export default db;
