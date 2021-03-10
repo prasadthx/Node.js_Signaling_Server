@@ -6,23 +6,23 @@ export default (router) => {
 // router.all('*', (req, res) => res.status(200).send({
 //   message: 'Hello World!',
 // }));
-router.post('/authenticate', AuthController.authenticateSchema, AuthController.authenticate);
+router.post('/accounts/authenticate', AuthController.authenticateSchema, AuthController.authenticate);
 
-router.post('/refresh-token', AuthController.refreshToken);
+router.post('/accounts/refresh-token', AuthController.refreshToken);
 
-router.post('/revoke-token', authorize(), AuthController.revokeTokenSchema, AuthController.revokeToken);
+router.post('/accounts/revoke-token', authorize(), AuthController.revokeTokenSchema, AuthController.revokeToken);
 
-router.post('/register', AuthController.registerSchema, AuthController.register);
+router.post('/accounts/register', AuthController.registerSchema, AuthController.register);
 
-router.post('/verify-email', AuthController.verifyEmailSchema, AuthController.verifyEmail);
+router.post('/accounts/verify-email', AuthController.verifyEmailSchema, AuthController.verifyEmail);
 
-router.post('/forgot-password', AuthController.forgotPasswordSchema, AuthController.forgotPassword);
+router.post('/accounts/forgot-password', AuthController.forgotPasswordSchema, AuthController.forgotPassword);
 
-router.post('/validate-reset-token', AuthController.validateResetTokenSchema, AuthController.validateResetToken);
+router.post('/accounts/validate-reset-token', AuthController.validateResetTokenSchema, AuthController.validateResetToken);
 
-router.post('/reset-password', AuthController.resetPasswordSchema, AuthController.resetPassword);
+router.post('/accounts/reset-password', AuthController.resetPasswordSchema, AuthController.resetPassword);
 
-router.get('/:id', authorize(), AuthController.getById);
+router.get('accounts/:id', authorize(), AuthController.getById);
 
 // router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
 

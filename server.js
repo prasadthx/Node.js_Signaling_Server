@@ -3,7 +3,7 @@ import express from "express";
 import cookieParser from 'cookie-parser';
 import { Server } from "socket.io";
 import route from './src/routes'
-
+const cors = require('cors');
 
 const app = express();
 const httpServer = createServer(app);
@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser())
 
+app.use(cors({ origin: (origin, callback) => callback(null, true), credentials: true }));
 route(app);
 
 app.get("/", (req, res) => {
