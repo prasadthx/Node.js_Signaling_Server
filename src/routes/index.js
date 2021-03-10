@@ -26,7 +26,7 @@ router.get('accounts/:id', authorize(), AuthController.getById);
 
 // router.post('/', authorize(Role.Admin), AuthController.createSchema, AuthController.create);
 
-router.put('/user/:id', authorize(), AuthController.updateSchema, AuthController.update);
+router.put('/accounts/:id', authorize(), AuthController.updateSchema, AuthController.update);
 
-router.delete('/userdelete/:id', authorize(), AuthController.delete);
+router.delete('/accounts/:id', authorize(), AuthController.delete);
 }
