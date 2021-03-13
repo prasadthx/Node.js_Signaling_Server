@@ -30,5 +30,8 @@ router.put('/accounts/:id', authorize(), AuthController.updateSchema, AuthContro
 
 router.delete('/accounts/:id', authorize(), AuthController.delete);
 
-router.put('/accounts/createmeeting/:id', authorize(), AuthController.createMeetingSchema, AuthController.createMeeting)
+router.put('/accounts/createmeeting/:id', authorize(), AuthController.createMeetingSchema, AuthController.createMeeting);
+
+router.get('/accounts/getmeetings/:id',authorize(),AuthController.getMeetings)
+
 }

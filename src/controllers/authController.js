@@ -26,7 +26,8 @@ module.exports = {
     delete:_delete,
     setTokenCookie,
     createMeeting,
-    createMeetingSchema
+    createMeetingSchema,
+    getMeetings
 }
 
 function authenticateSchema(req, res, next) {
@@ -236,6 +237,21 @@ function createMeeting(req, res, next) {
 
     UserService.createmeeting(req.params.id, req.body)
         .then(account => res.json(account))
+        .catch(next);
+}
+
+function getMeetings(req, res,next) {
+    console.log("#########################//////////rprasf///////////////####################")
+    console.log("Create Meeitng serveiceskjfsdffsdf")
+    if (Number(req.params.id) !== req.user.id) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    console.log("#########################//////////rprasf///////////////####################")
+    console.log("Create Meeitng serveiceskjfsdffsdf")
+
+    UserService.getMeetings(req.params.id)
+        .then(meetings => res.json(meetings))
         .catch(next);
 }
 

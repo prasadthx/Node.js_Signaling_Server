@@ -23,7 +23,8 @@ module.exports = {
     getById,
     update,
     delete: _delete,
-    createmeeting
+    createmeeting,
+    getMeetings
 };
 
 async function authenticate({ email, password, ipAddress }) {
@@ -234,6 +235,13 @@ async function createmeeting(id, params) {
     user = await getUser(id);
     console.log(user.meetings)
     return console.log("User meetings")
+}
+
+async function getMeetings(id) {
+    const user = await getUser(id)
+    console.log("/////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\")
+    console.log(user.meetings)
+    return user.meetings
 }
 
 async function _delete(id) {
