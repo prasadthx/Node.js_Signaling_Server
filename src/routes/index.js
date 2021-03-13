@@ -29,4 +29,6 @@ router.get('accounts/:id', authorize(), AuthController.getById);
 router.put('/accounts/:id', authorize(), AuthController.updateSchema, AuthController.update);
 
 router.delete('/accounts/:id', authorize(), AuthController.delete);
+
+router.put('/accounts/createmeeting/:id', authorize(), AuthController.createMeetingSchema, AuthController.createMeeting)
 }

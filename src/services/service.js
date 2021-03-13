@@ -22,7 +22,8 @@ module.exports = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    createmeeting
 };
 
 async function authenticate({ email, password, ipAddress }) {
@@ -210,6 +211,31 @@ async function update(id, params) {
     return basicDetails(user);
 }
 
+async function createmeeting(id, params) {
+    let user = await getUser(id);
+    console.log("#########################//////////rprasf///////////////####################")
+    console.log(params.id)
+    console.log(user.meetings)
+    if(user.meetings==null){
+        user.meetings={}
+    }
+    else{
+        console.log(params.meetingid)
+        console.log(params.description)
+        let meetingid = params.meetingid;
+        let description = params.description;
+        let newmeeting={};
+        newmeeting[meetingid] = description
+        user.meetings = { ...user.meetings,...newmeeting}
+        console.log(user.meetings)
+    }
+    
+    await user.save()
+    user = await getUser(id);
+    console.log(user.meetings)
+    return console.log("User meetings")
+}
+
 async function _delete(id) {
     const user = await getUser(id);
     await user.destroy();
@@ -268,7 +294,7 @@ function basicDetails(user) {
 async function sendVerificationEmail(user, origin) {
     let message;
     if (origin) {
-        const verifyUrl = `${origin}/account/verify-email?token=${user.verificationToken}`;
+        const verifyUrl = `${origin}/auth/account/verify-email?token=${user.verificationToken}`;
         message = `<p>Please click the below link to verify your email address:</p>
                    <p><a href="${verifyUrl}">${verifyUrl}</a></p>`;
     } else {
@@ -305,7 +331,7 @@ async function sendVerificationEmail(user, origin) {
 async function sendPasswordResetEmail(user, origin) {
     let message;
     if (origin) {
-        const resetUrl = `${origin}/account/reset-password?token=${user.resetToken}`;
+        const resetUrl = `${origin}/auth/account/reset-password?token=${user.resetToken}`;
         message = `<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                    <p><a href="${resetUrl}">${resetUrl}</a></p>`;
     } else {

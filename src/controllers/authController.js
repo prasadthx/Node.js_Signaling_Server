@@ -24,7 +24,9 @@ module.exports = {
     updateSchema,
     update,
     delete:_delete,
-    setTokenCookie
+    setTokenCookie,
+    createMeeting,
+    createMeetingSchema
 }
 
 function authenticateSchema(req, res, next) {
@@ -211,6 +213,28 @@ function update(req, res, next) {
     }
 
     UserService.update(req.params.id, req.body)
+        .then(account => res.json(account))
+        .catch(next);
+}
+
+function createMeetingSchema(req, res, next) {
+    const schema = Joi.object({
+        meetingid:Joi.string().required(),
+        description:Joi.string().required()
+    });
+    validateRequest(req, next, schema);
+}
+
+function createMeeting(req, res, next) {
+    // users can update their own account and admins can update any account
+    if (Number(req.params.id) !== req.user.id) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    console.log("#########################//////////rprasf///////////////####################")
+    console.log("Create Meeitng serveiceskjfsdffsdf")
+
+    UserService.createmeeting(req.params.id, req.body)
         .then(account => res.json(account))
         .catch(next);
 }

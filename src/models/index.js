@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
 import enVariables from '../config/config.js';
-// import Variables from '../config/smtp.config.js';
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
@@ -15,15 +14,6 @@ if (config.use_env_variable) {
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
-
-// sequelize = new Sequelize({
-//   dialect: 'postgres',
-//   host: '127.0.0.1',
-//   port: '5432',
-//   username: 'postgres',
-//   password: 'password',
-//   dbname: 'nodeauth'
-// })
 
 fs
   .readdirSync(__dirname)
@@ -58,5 +48,5 @@ db.Sequelize = Sequelize;
 
 // sequelize.sync({ force: true }).then(()=>console.log("Synchronized successful"))
 console.log("-------------------------*****************-----------------------")
-console.log(db.User)
+
 export default db;
