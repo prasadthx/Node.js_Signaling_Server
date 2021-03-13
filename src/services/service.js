@@ -232,9 +232,7 @@ async function createmeeting(id, params) {
     }
     
     await user.save()
-    user = await getUser(id);
-    console.log(user.meetings)
-    return console.log("User meetings")
+    return basicDetails(user)
 }
 
 async function getMeetings(id) {
