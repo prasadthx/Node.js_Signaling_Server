@@ -32,51 +32,64 @@ let io = new Server(httpServer,{
 
 const port = process.env.PORT;
 
+
 var time = 0;
 io.on('connection', (socket) => {
-    time += 1
+    time += 1;
     console.log('user connected: '+time+'time');
-    socket.on("join",(roomName)=>{
-        console.log(roomName)
+    socket.on('joinAsHost', (roomName) => {
+        console.log("-------------/////////////////////////#######################");
+        socket.join(roomName);
+        console.log(roomName);
+        let room = io.sockets.adapter.rooms.get(roomName);
+        room.host = socket.id;
+        console.log(room);
+    })
+    socket.on("join",(roomName, userName)=>{
+        console.log(`${roomName}1`)
         let rooms = io.sockets.adapter.rooms;
-        let room = rooms.get(roomName);
+        let room = rooms.get(`${roomName}1`);
+        console.log("/////////////////////////########################//////////////////////");
+        console.log("This is room: "+room);
         let roomStatus;
         //room == undefined when no such room exists.
         if (room === undefined) {
-            socket.join(roomName);
-            roomStatus = 'created'
-            socket.emit('joined',roomStatus);
-        } else if (room.size === 1) {
-            //room.size == 1 when one person is inside the room.
-            socket.join(roomName);
-            roomStatus = 'joined'
-            socket.emit('joined',roomStatus);
-        } else {
-            //when there are already two people inside the room.
-            socket.emit("full");
+            roomStatus = 'No such meeting ID exists';
+            socket.emit('undefinedRoom',roomStatus);
+        }
+        else {
+            // When room exists.
+            socket.join(`${roomName}1`);
+            roomStatus = 'newPeer'
+            io.to(room.host).emit('acceptRejectCall',{'userName': userName, 'socketId': socket.id});
         }
         console.log(rooms);
     });
-    socket.on("ready", (roomName) => {
-        socket.broadcast.to(roomName).emit("ready"); //Informs the other peer in the room.
+
+    socket.on('callRejected',(socketId)=>{
+        io.to(socketId).emit('callCancelled');
+    })
+
+    socket.on("ready", (roomName, socketId) => {
+        io.to(socketId).emit("ready", roomName, socketId); //Informs the peer to start connection in the room.
     });
 
     //Triggered when server gets an icecandidate from a peer in the room.
     socket.on("candidate", function (candidate, roomName) {
         console.log(candidate);
-        socket.broadcast.to(roomName).emit("candidate", candidate); //Sends Candidate to the other peer in the room.
+        socket.to(roomName).emit("candidate", candidate); //Sends Candidate to the other peer in the room.
     });
 
     //Triggered when server gets an offer from a peer in the room.
 
-    socket.on("offer", function (offer, roomName) {
-        socket.broadcast.to(roomName).emit("offer", offer); //Sends Offer to the other peer in the room.
+    socket.on("offer", function (offer, roomName, socketId) {
+        socket.to(roomName).emit("offer", offer, socketId); //Sends Offer to the other peer in the room.
     });
 
     //Triggered when server gets an answer from a peer in the room.
 
-    socket.on("answer", function (answer, roomName) {
-        socket.broadcast.to(roomName).emit("answer", answer); //Sends Answer to the other peer in the room.
+    socket.on("answer", function (answer, socketId) {
+        io.to(socketId).emit("answer", answer); //Sends Answer to the other peer in the room.
     });
 });
 
