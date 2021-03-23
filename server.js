@@ -44,6 +44,7 @@ io.on('connection', (socket) => {
         let room = io.sockets.adapter.rooms.get(roomName);
         room.host = socket.id;
         console.log(room);
+        io.to(socket.id).emit("socketid",socket.id);
     })
     socket.on("join",(roomName, userName)=>{
         console.log(`${roomName}1`)
@@ -70,26 +71,26 @@ io.on('connection', (socket) => {
         io.to(socketId).emit('callCancelled');
     })
 
-    socket.on("ready", (roomName, socketId) => {
-        io.to(socketId).emit("ready", roomName, socketId); //Informs the peer to start connection in the room.
+    socket.on("ready", (roomName, socketId, userName) => {
+        io.in(roomName).emit("ready", roomName, socketId, userName); //Informs, the peer is ready to start connection in the room.
     });
 
     //Triggered when server gets an icecandidate from a peer in the room.
-    socket.on("candidate", function (candidate, roomName) {
+    socket.on("candidate", function (candidate, socketId) {
         console.log(candidate);
-        socket.to(roomName).emit("candidate", candidate); //Sends Candidate to the other peer in the room.
+        io.to(socketId).emit("candidate", candidate); //Sends Candidate to the other peer in the room.
     });
 
     //Triggered when server gets an offer from a peer in the room.
 
-    socket.on("offer", function (offer, roomName, socketId) {
-        socket.to(roomName).emit("offer", offer, socketId); //Sends Offer to the other peer in the room.
+    socket.on("offer", function (offer, userName, socketId, callerSocketId) {
+        io.to(socketId).emit("offer", offer, userName, socketId, callerSocketId); //Sends Offer to the other peer in the room.
     });
 
     //Triggered when server gets an answer from a peer in the room.
 
-    socket.on("answer", function (answer, socketId) {
-        io.to(socketId).emit("answer", answer); //Sends Answer to the other peer in the room.
+    socket.on("answer", function (answer, callerSocketId) {
+        io.to(callerSocketId).emit("answer", answer); //Sends Answer to the other peer in the room.
     });
 });
 
