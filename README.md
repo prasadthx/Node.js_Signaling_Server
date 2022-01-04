@@ -8,4 +8,4 @@
 
 
 ## FrontEnd (In Angular 11,Socket.io, without using third-party library for WebRTC functionality):
-<a href="https://github.com/prasadthx/Milan">Angular WebRTC app</a>
+<a href="https://github.com/prasadthx/Angular-WebRTC">Angular WebRTC app</a>
